@@ -1,10 +1,13 @@
 package main
 
-import(
- "gofr.dev/pkg/gofr"
- "./Models"
- "./Database"
+import (
+	"gofr.dev/pkg/gofr"
+	"github.com/Vijay0333/Jopsmart/models"
+	"github.com/Vijay0333/Jopsmart/Database"
 )
+
+// ... (rest of your code remains unchanged)
+
 
 func main() {
 	// initialise gofr object
