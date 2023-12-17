@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Garage Management System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Car Garage Management System</h1>
+  </header>
+  <main>
+    <section class="car-entry">
+      <h2>Add Car Entry</h2>
+      <form action="#">
+        <label for="license-plate">License Plate:</label>
+        <input type="text" id="license-plate" name="license_plate" required>
+        <label for="car-model">Car Model:</label>
+        <input type="text" id="car-model" name="car_model" required>
+        <label for="arrival-time">Arrival Time:</label>
+        <input type="datetime-local" id="arrival-time" name="arrival_time" required>
+        <button type="submit">Add Car</button>
+      </form>
+    </section>
+    <section class="car-list">
+      <h2>Cars Currently in Garage</h2>
+      <ul id="car-list-ul">
+        </ul>
+    </section>
+    <section class="car-update">
+      <h2>Update Car Status</h2>
+      <form action="#">
+        <label for="update-car">Select Car:</label>
+        <select id="update-car" name="update_car">
+          </select>
+        <label for="update-type">Update Type:</label>
+        <select id="update-type" name="update_type">
+          <option value="repair-started">Repair Started</option>
+          <option value="repair-complete">Repair Completed</option>
+          <option value="ready-for-pickup">Ready for Pickup</option>
+        </select>
+        <button type="submit">Update</button>
+      </form>
+    </section>
+  </main>
+</body>
+</html>
