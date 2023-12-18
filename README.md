@@ -4,6 +4,10 @@ Here i am going to create Simple API Using GoFr framework which perform CRUD ope
 # Install Dependency
 go mod init github.com/example
 
+# To connect MongoDB
+go get go.mongodb.org/mongo-driver/mongo
+
+
 # To Add Gofr framework
 go get gofr.dev
 
