@@ -1,23 +1,29 @@
 package main
 
 import (
-	"context" // Import context package for context.Background
+	"context"
 	"fmt"
-	"io/ioutil"
-	"net/http" // Import http package for status codes
-	"os"   // Import os package for os.Getenv
-	"time" // Import time package for time.Now
-    "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"gofr.dev/pkg/gofr"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"net/http"
+	"os"
+	"time"
+	"io/iouti"
 )
 
+// Car struct representing the data model
+type Car struct {
+	LicensePlate string    `json:"license_plate"`
+	CarModel     string    `json:"car_model"`
+	ArrivalTime  time.Time `json:"arrival_time"`
+}
+
 func main() {
-	// initialise gofr object
+	// Initialise gofr object
 	app := gofr.New()
 
-	// Serve index.html from the Template folder
-	 app.GET("/", func(c *gofr.Context) (interface{}, error) {
+	app.GET("/", func(c *gofr.Context) (interface{}, error) {
 		html, err := ioutil.ReadFile("Template/index.html")
 		if err != nil {
 			return nil, err
@@ -34,14 +40,7 @@ func main() {
 		return nil, nil
 	})
 
-	// app.GET("/", func(c *gofr.Context) (interface{}, error) {
-	// 	html, err := ioutil.ReadFile("Template/index.html")
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-	// 	return string(html), nil
-	// })
-
+	// MongoDB connection string
 	connectionString := os.Getenv("MONGO_CONNECTION_STRING")
 
 	// Connect to MongoDB
@@ -55,29 +54,43 @@ func main() {
 	// Get collection
 	collection := client.Database("car_garage").Collection("cars")
 
-	// Create car data
-	carData := map[string]interface{}{
-		"license_plate": "ABC123",
-		"car_model":     "Honda Civic",
-		"arrival_time":  time.Now(),
-	}
+	// Route to handle form submission
+	app.POST("/submit", func(c *gofr.Context) (interface{}, error) {
+		// Parse form data from the request
+		err := c.Request.ParseForm()
+		if err != nil {
+			return nil, err
+		}
 
-	// Add car to database
-	_, err = collection.InsertOne(context.Background(), carData)
-	if err != nil {
-		fmt.Println("Error adding car data:", err)
-		return
-	}
+		// Extract form values
+		licensePlate := c.Request.FormValue("license_plate")
+		carModel := c.Request.FormValue("car_model")
+		arrivalTimeString := c.Request.FormValue("arrival_time")
 
-	fmt.Println("Car added successfully!")
+		// Parse arrival time from form value
+		arrivalTime, err := time.Parse("2006-01-02T15:04", arrivalTimeString)
+		if err != nil {
+			return nil, err
+		}
 
-	// register route greet
-	// app.GET("/greet", func(ctx *gofr.Context) (interface{}, error) {
+		// Create Car object
+		newCar := Car{
+			LicensePlate: licensePlate,
+			CarModel:     carModel,
+			ArrivalTime:  arrivalTime,
+		}
 
-	//     return "Hello World!", nil
-	// })
+		// Insert the car data into MongoDB
+		_, err = collection.InsertOne(context.Background(), newCar)
+		if err != nil {
+			return nil, err
+		}
 
-	// Starts the server, it will listen on the default port 8000.
-	// it can be over-ridden through configs
+		// Return success message
+		return "Car data stored in MongoDB", nil
+	})
+
+	// Start the server, it will listen on the default port 8000.
+	// It can be overridden through configs
 	app.Start()
 }
